@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b14">
+<title>AnimeRate — Rate Every Anime</title>
+<style>
+:root{--bg:#090b14;--panel:#111626;--panel2:#171f33;--text:#f5f7ff;--muted:#9ba7c2;--accent:#a78bfa;--accent2:#6ee7d8;--line:#283149}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#24204a 0,transparent 36%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+header{padding:24px max(20px,calc((100vw - 1120px)/2));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff12;gap:16px}
+.logo{font-size:23px;font-weight:900;letter-spacing:-1px}.logo span{color:var(--accent)}
+nav{display:flex;gap:8px}button{font:inherit;cursor:pointer;border:0}.navbtn{background:transparent;color:var(--muted);padding:10px 13px;border-radius:10px}.navbtn.active,.navbtn:hover{background:var(--panel2);color:white}
+main{max-width:1120px;margin:auto;padding:36px 20px 70px}
+.hero{display:grid;grid-template-columns:1.4fr .6fr;gap:20px;align-items:center;margin-bottom:28px}.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.03;margin:0 0 14px;letter-spacing:-2px}.hero h1 span{color:var(--accent)}.hero p{color:var(--muted);line-height:1.7;margin:0;max-width:620px}
+.stats{background:linear-gradient(145deg,#1b2040,#111626);border:1px solid #ffffff14;border-radius:18px;padding:22px;display:flex;justify-content:space-around;text-align:center}.stat strong{display:block;font-size:28px}.stat small{color:var(--muted)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 18px}.search{flex:1;min-width:210px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:white;padding:13px 15px;outline:none}.search:focus,input:focus,select:focus{border-color:var(--accent)}
+select{background:var(--panel);border:1px solid var(--line);color:white;border-radius:12px;padding:12px}
+.primary{background:var(--accent);color:#160f2d;font-weight:800;padding:12px 17px;border-radius:12px}.primary:hover{filter:brightness(1.1)}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:28px 0 14px}.sectionhead h2{margin:0;font-size:21px}.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:linear-gradient(160deg,#151d30,#101522);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:.2s}.card:hover{transform:translateY(-3px);border-color:#7565bb}
+.poster{height:155px;display:flex;align-items:center;justify-content:center;font-size:55px;background:linear-gradient(135deg,#342b67,#172b43);position:relative}.poster:after{content:"ANIME";position:absolute;bottom:10px;right:12px;font-size:10px;letter-spacing:3px;color:#ffffff88}
+.cardbody{padding:15px}.cardtop{display:flex;justify-content:space-between;gap:10px}.card h3{font-size:17px;margin:0 0 5px}.genre{font-size:12px;color:var(--muted)}.score{font-weight:900;color:#fbbf24;white-space:nowrap}.score small{font-size:11px;color:var(--muted);font-weight:500}.cardfoot{display:flex;justify-content:space-between;align-items:center;margin-top:15px}.ratebtn{background:#282344;color:#d9ceff;border:1px solid #574a88;border-radius:9px;padding:8px 11px;font-size:13px}.myrating{font-size:12px;color:var(--accent2)}
+.empty{padding:36px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:15px;grid-column:1/-1}
+.overlay{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}.modal{width:min(440px,100%);background:#141b2d;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 20px 70px #0009}.modal h2{margin:0 0 5px}.modal p{color:var(--muted);font-size:14px}.modal label{display:block;margin:15px 0 7px;font-size:13px;color:#cbd3e7}.modal input,.modal select{width:100%;padding:12px;background:#0b1020;border:1px solid var(--line);color:white;border-radius:10px}.ratingrow{display:flex;align-items:center;gap:12px}.ratingrow input{padding:0;accent-color:var(--accent)}.ratingnum{font-size:24px;font-weight:900;color:#fbbf24;min-width:45px}.modalactions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.secondary{background:#273149;color:white;padding:11px 15px;border-radius:10px}
+footer{text-align:center;color:#69758e;padding:25px;font-size:12px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.stats{padding:15px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.poster{height:125px}.hero h1{font-size:40px}}
+@media(max-width:470px){header{padding:18px 14px}.logo{font-size:20px}nav{gap:0}.navbtn{padding:8px;font-size:12px}main{padding:25px 14px 50px}.grid{grid-template-columns:1fr 1fr;gap:10px}.cardbody{padding:11px}.card h3{font-size:14px}.poster{height:105px;font-size:42px}.cardfoot{align-items:flex-start;gap:7px;flex-direction:column}.stats{gap:12px}.stat strong{font-size:23px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Anime<span>Rate</span> ✦</div>
+  <nav><button class="navbtn active" data-view="all">Discover</button><button class="navbtn" data-view="rated">My Ratings</button></nav>
+</header>
+<main>
+  <section class="hero">
+    <div><h1>Every anime.<br><span>Your rating.</span></h1><p>তোমার পছন্দের যেকোনো Anime খুঁজে বের করো, ১–১০ এর মধ্যে Rating দাও, আর নিজের Anime collection তৈরি করো।</p></div>
+    <div class="stats"><div class="stat"><strong id="totalAnime">0</strong><small>Anime</small></div><div class="stat"><strong id="ratedCount">0</strong><small>Rated</small></div><div class="stat"><strong id="average">—</strong><small>Your average</small></div></div>
+  </section>
+  <div class="toolbar">
+    <input id="search" class="search" placeholder="Search anime..." aria-label="Search anime">
+    <select id="sort"><option value="popular">Popular first</option><option value="score">Highest rated</option><option value="az">A–Z</option><option value="mine">My score</option></select>
+    <button class="primary" id="addBtn">＋ Add Anime</button>
+  </div>
+  <div class="sectionhead"><h2 id="sectionTitle">Explore Anime</h2><span class="muted" id="resultCount"></span></div>
+  <section class="grid" id="animeGrid"></section>
+</main>
+<footer>AnimeRate • Ratings are saved in this browser on this device.</footer>
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Rate Anime</h2><p id="modalAnime"></p>
+    <label for="rating">Your rating</label>
+    <div class="ratingrow"><input id="rating" type="range" min="1" max="10" step="0.5" value="8" style="flex:1"><span class="ratingnum" id="ratingNum">8.0</span></div>
+    <label for="review">Short review (optional)</label><input id="review" maxlength="140" placeholder="What did you think?">
+    <div class="modalactions"><button class="secondary" id="cancel">Cancel</button><button class="primary" id="save">Save rating</button></div>
+  </div>
+</div>
+<script>
+const seed=[
+ {id:1,title:"Naruto",genre:"Action • Adventure",score:8.4,emoji:"🍥"},
+ {id:2,title:"One Piece",genre:"Adventure • Fantasy",score:9.0,emoji:"🏴‍☠️"},
+ {id:3,title:"Attack on Titan",genre:"Action • Dark Fantasy",score:9.1,emoji:"⚔️"},
+ {id:4,title:"Jujutsu Kaisen",genre:"Action • Supernatural",score:8.6,emoji:"👁️"},
+ {id:5,title:"Solo Leveling",genre:"Action • Fantasy",score:8.7,emoji:"🗡️"},
+ {id:6,title:"Your Name",genre:"Romance • Drama",score:8.8,emoji:"☄️"},
+ {id:7,title:"A Silent Voice",genre:"Drama • Slice of Life",score:8.9,emoji:"🌸"},
+ {id:8,title:"Demon Slayer",genre:"Action • Fantasy",score:8.5,emoji:"🔥"},
+ {id:9,title:"Death Note",genre:"Mystery • Thriller",score:8.9,emoji:"📓"}
+];
+let custom=JSON.parse(localStorage.getItem("ar_custom")||"[]");
+let ratings=JSON.parse(localStorage.getItem("ar_ratings")||"{}");
+let view="all", activeId=null;
+const all=()=>[...seed,...custom];
+const $=id=>document.getElementById(id);
+function persist(){localStorage.setItem("ar_custom",JSON.stringify(custom));localStorage.setItem("ar_ratings",JSON.stringify(ratings));}
+function stats(){let rated=Object.values(ratings);$("totalAnime").textContent=all().length;$("ratedCount").textContent=rated.length;$("average").textContent=rated.length?(rated.reduce((a,b)=>a+b.score,0)/rated.length).toFixed(1):"—";}
+function render(){
+ let q=$("search").value.toLowerCase(),sort=$("sort").value;
+ let list=all().filter(a=>a.title.toLowerCase().includes(q)||a.genre.toLowerCase().includes(q));
+ if(view==="rated")list=list.filter(a=>ratings[a.id]);
+ if(sort==="score")list.sort((a,b)=>b.score-a.score);
+ if(sort==="az")list.sort((a,b)=>a.title.localeCompare(b.title));
+ if(sort==="mine")list.sort((a,b)=>(ratings[b.id]?.score||0)-(ratings[a.id]?.score||0));
+ $("sectionTitle").textContent=view==="rated"?"My Anime Ratings":"Explore Anime";
+ $("resultCount").textContent=list.length+" titles";
+ $("animeGrid").innerHTML=list.length?list.map(a=>{let r=ratings[a.id];return `<article class="card"><div class="poster">${a.emoji||"🎬"}</div><div class="cardbody"><div class="cardtop"><div><h3>${escapeHtml(a.title)}</h3><div class="genre">${escapeHtml(a.genre)}</div></div><div class="score">★ ${a.score.toFixed(1)}<small>/10</small></div></div><div class="cardfoot"><span class="myrating">${r?"Your rating: "+r.score.toFixed(1)+"/10":"Not rated yet"}</span><button class="ratebtn" data-rate="${a.id}">${r?"Edit rating":"☆ Rate anime"}</button></div>${r&&r.review?`<p class="muted">“${escapeHtml(r.review)}”</p>`:""}</div></article>`}).join(""):`<div class="empty">কোনো Anime পাওয়া যায়নি। “Add Anime” চাপ দিয়ে নতুন Anime যোগ করো।</div>`;
+ document.querySelectorAll("[data-rate]").forEach(b=>b.addEventListener("click",()=>openRate(Number(b.dataset.rate))));
+ stats();
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function openRate(id){activeId=id;let a=all().find(x=>x.id===id),r=ratings[id];$("modalTitle").textContent="Rate Anime";$("modalAnime").textContent=a.title;$("rating").value=r?.score||8;$("ratingNum").textContent=Number($("rating").value).toFixed(1);$("review").value=r?.review||"";$("overlay").style.display="flex";}
+$("rating").addEventListener("input",()=>{$("ratingNum").textContent=Number($("rating").value).toFixed(1)});
+$("cancel").onclick=()=>$("overlay").style.display="none";
+$("save").onclick=()=>{ratings[activeId]={score:Number($("rating").value),review:$("review").value.trim()};persist();$("overlay").style.display="none";render();};
+$("addBtn").onclick=()=>{let title=prompt("Anime-এর নাম লিখো:");if(!title||!title.trim())return;if(all().some(a=>a.title.toLowerCase()===title.trim().toLowerCase())){alert("এই Anime আগে থেকেই আছে!");return;}let genre=prompt("Genre লিখো (optional):","Anime")||"Anime";let a={id:Date.now(),title:title.trim(),genre:genre.trim(),score:0,emoji:"🎬"};custom.push(a);persist();render();openRate(a.id);};
+$("search").addEventListener("input",render);$("sort").addEventListener("change",render);
+document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{view=b.dataset.view;document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x===b));render();});
+$("overlay").addEventListener("click",e=>{if(e.target===$("overlay"))$("overlay").style.display="none"});
+render();
+</script>
+</body>
+</html>
